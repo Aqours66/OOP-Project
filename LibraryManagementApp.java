@@ -46,6 +46,10 @@ public class LibraryManagementApp extends JFrame {
         return isbn.length() == 13;
     }
 
+      // Customize button appearance
+    int buttonWidth = 250; // Set the desired width for buttons
+    int buttonHeight = 80; // Set the desired height for buttons
+
     private void setButtonsEnabled(boolean enabled) {
         addButton.setEnabled(enabled);
         updateButton.setEnabled(enabled);
@@ -113,6 +117,20 @@ public class LibraryManagementApp extends JFrame {
         customizeButton(checkoutBookButton, new Color(52, 152, 219));
         customizeButton(returnBookButton, new Color(44, 62, 80));
         customizeButton(displayTransactionsButton, new Color(231, 76, 60));
+
+          // Update the preferred dimensions for the buttons
+        addButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        updateButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        deleteButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        displayButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        addPatronButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        updatePatronButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        deletePatronButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        displayPatronsButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        addTransactionButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        checkoutBookButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        returnBookButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+        displayTransactionsButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 
         JButton registerButton = new JButton("Register User");
         customizeButton(registerButton, new Color(155, 89, 182));
