@@ -41,36 +41,26 @@ public class LibraryManagementApp extends JFrame {
         });
     }
 
-    private boolean isValidYear(String year) {
-        try {
-            int yearValue = Integer.parseInt(year);
-            // Add more specific checks for valid year range if needed
-            return yearValue >= 1000 && yearValue <= 9999;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+  private boolean isValidISBN(String isbn) {
+        isbn = isbn.replaceAll("-", "").replaceAll(" ", ""); // Remove dashes and spaces
+        return isbn.length() == 13;
     }
 
-    private boolean isValidISBN(String isbn) {
-        isbn = isbn.replaceAll("-", "").replaceAll(" ", ""); // Remove dashes and spaces
-        if (isbn.length() != 13) {
-            return false;
-        }
+    private void setButtonsEnabled(boolean enabled) {
+        addButton.setEnabled(enabled);
+        updateButton.setEnabled(enabled);
+        deleteButton.setEnabled(enabled);
+        displayButton.setEnabled(enabled);
 
-        try {
-            int sum = 0;
-            for (int i = 0; i < 12; i++) {
-                int digit = Character.getNumericValue(isbn.charAt(i));
-                sum += (i % 2 == 0) ? digit : digit * 3;
-            }
+        addPatronButton.setEnabled(enabled);
+        updatePatronButton.setEnabled(enabled);
+        deletePatronButton.setEnabled(enabled);
+        displayPatronsButton.setEnabled(enabled);
 
-            int checkDigit = Character.getNumericValue(isbn.charAt(12));
-            int calculatedCheckDigit = (10 - (sum % 10)) % 10;
-
-            return checkDigit == calculatedCheckDigit;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+        addTransactionButton.setEnabled(enabled);
+        checkoutBookButton.setEnabled(enabled);
+        returnBookButton.setEnabled(enabled);
+        displayTransactionsButton.setEnabled(enabled);
     }
 
     public LibraryManagementApp() {
@@ -124,6 +114,57 @@ public class LibraryManagementApp extends JFrame {
         customizeButton(returnBookButton, new Color(44, 62, 80));
         customizeButton(displayTransactionsButton, new Color(231, 76, 60));
 
+        JButton registerButton = new JButton("Register User");
+        customizeButton(registerButton, new Color(155, 89, 182));
+        buttonPanel.add(registerButton);
+
+        registerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter username:");
+                String password = JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter password:");
+
+                if (username != null && password != null) {
+                    library.registerUser(username, password);
+                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "User registered successfully!");
+                }
+            }
+        });
+
+        JButton loginButton = new JButton("Login");
+        customizeButton(loginButton, new Color(46, 204, 113));
+        buttonPanel.add(loginButton);
+
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter username:");
+                String password = JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter password:");
+
+                if (username != null && password != null) {
+                    if (library.authenticateUser(username, password)) {
+                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Login successful!");
+                        LibraryManagementApp.this.setButtonsEnabled(true); // Enable buttons after successful login
+                    } else {
+                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Login failed. Invalid credentials.");
+                    }
+                }
+            }
+        });
+
+        JButton logoutButton = new JButton("Logout");
+        customizeButton(logoutButton, new Color(192, 57, 43));
+        buttonPanel.add(logoutButton);
+
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                LibraryManagementApp.this.setButtonsEnabled(false); // Disable buttons on logout
+            }
+        });
+
+        setButtonsEnabled(false);
+
         // Button actions
         addButton.addActionListener(new ActionListener() {
             @Override
@@ -152,7 +193,7 @@ public class LibraryManagementApp extends JFrame {
                     String isbn = isbnField.getText();
 
                     if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
-                        if (isValidYear(year) && isValidISBN(isbn)) {
+                        if (isValidISBN(isbn)) {
                             Book book = new Book(-1, title, author, year, isbn);
                             library.addBook(book);
                             JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book added successfully!");
