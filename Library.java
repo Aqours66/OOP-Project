@@ -39,6 +39,40 @@ public class Library {
         }
     }
 
+        public void registerUser(String username, String password) {
+        User user = new User(username, password);
+
+        try {
+            String sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.executeUpdate();
+
+            System.out.println("User registered successfully!");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean authenticateUser(String username, String password) {
+        String sql = "SELECT password FROM users WHERE username = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String storedPassword = resultSet.getString("password");
+                User user = new User(username, storedPassword);
+                return user.authenticate(password);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     public Patron getPatronByName(String name) {
         for (Patron patron : patrons) {
             if (patron.getName().equalsIgnoreCase(name)) {
