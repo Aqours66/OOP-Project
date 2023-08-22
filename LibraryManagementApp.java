@@ -41,14 +41,15 @@ public class LibraryManagementApp extends JFrame {
         });
     }
 
-  private boolean isValidISBN(String isbn) {
+    private boolean isValidISBN(String isbn) {
         isbn = isbn.replaceAll("-", "").replaceAll(" ", ""); // Remove dashes and spaces
         return isbn.length() == 13;
     }
 
-      // Customize button appearance
+    // Customize button appearance
     int buttonWidth = 250; // Set the desired width for buttons
     int buttonHeight = 80; // Set the desired height for buttons
+    Font buttonFont = new Font("Arial", Font.BOLD, 18); // Customize font and siz
 
     private void setButtonsEnabled(boolean enabled) {
         addButton.setEnabled(enabled);
@@ -65,6 +66,13 @@ public class LibraryManagementApp extends JFrame {
         checkoutBookButton.setEnabled(enabled);
         returnBookButton.setEnabled(enabled);
         displayTransactionsButton.setEnabled(enabled);
+    }
+
+    private JTable createTable(String[] columnHeaders, Object[][] data) {
+        JTable table = new JTable(data, columnHeaders);
+        table.getTableHeader().setFont(new Font("Calibri", Font.BOLD, 16)); // Customize header font
+        table.setFont(new Font("Calibri", Font.PLAIN, 14)); // Customize cell font
+        return table;
     }
 
     public LibraryManagementApp() {
@@ -86,7 +94,7 @@ public class LibraryManagementApp extends JFrame {
         displayTransactionsButton = new JButton("Display Transactions");
 
         // Layout setup
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 4, 10, 10));
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 3, 10, 10));
 
         buttonPanel.add(addButton);
         buttonPanel.add(updateButton);
@@ -118,7 +126,7 @@ public class LibraryManagementApp extends JFrame {
         customizeButton(returnBookButton, new Color(44, 62, 80));
         customizeButton(displayTransactionsButton, new Color(231, 76, 60));
 
-          // Update the preferred dimensions for the buttons
+        // Update the preferred dimensions for the buttons
         addButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         updateButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         deleteButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
@@ -132,9 +140,25 @@ public class LibraryManagementApp extends JFrame {
         returnBookButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
         displayTransactionsButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 
+        addButton.setFont(buttonFont);
+        updateButton.setFont(buttonFont);
+        deleteButton.setFont(buttonFont);
+        displayButton.setFont(buttonFont);
+
+        addPatronButton.setFont(buttonFont);
+        updatePatronButton.setFont(buttonFont);
+        deletePatronButton.setFont(buttonFont);
+        displayPatronsButton.setFont(buttonFont);
+
+        addTransactionButton.setFont(buttonFont);
+        checkoutBookButton.setFont(buttonFont);
+        returnBookButton.setFont(buttonFont);
+        displayTransactionsButton.setFont(buttonFont);
+
         JButton registerButton = new JButton("Register User");
         customizeButton(registerButton, new Color(155, 89, 182));
         buttonPanel.add(registerButton);
+        registerButton.setFont(buttonFont);
 
         registerButton.addActionListener(new ActionListener() {
             @Override
@@ -152,6 +176,7 @@ public class LibraryManagementApp extends JFrame {
         JButton loginButton = new JButton("Login");
         customizeButton(loginButton, new Color(46, 204, 113));
         buttonPanel.add(loginButton);
+        loginButton.setFont(buttonFont);
 
         loginButton.addActionListener(new ActionListener() {
             @Override
@@ -173,6 +198,7 @@ public class LibraryManagementApp extends JFrame {
         JButton logoutButton = new JButton("Logout");
         customizeButton(logoutButton, new Color(192, 57, 43));
         buttonPanel.add(logoutButton);
+        logoutButton.setFont(buttonFont);
 
         logoutButton.addActionListener(new ActionListener() {
             @Override
@@ -184,43 +210,70 @@ public class LibraryManagementApp extends JFrame {
         setButtonsEnabled(false);
 
         // Button actions
+
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPanel panel = new JPanel(new GridLayout(0, 1));
-                panel.add(new JLabel("Title:"));
-                JTextField titleField = new JTextField();
-                panel.add(titleField);
-                panel.add(new JLabel("Author:"));
-                JTextField authorField = new JTextField();
-                panel.add(authorField);
-                panel.add(new JLabel("Year:"));
-                JTextField yearField = new JTextField();
-                panel.add(yearField);
-                panel.add(new JLabel("ISBN:"));
-                JTextField isbnField = new JTextField();
-                panel.add(isbnField);
+                try {
+                    JPanel panel = new JPanel(new GridLayout(0, 1));
+                    panel.add(new JLabel("Title:"));
+                    JTextField titleField = new JTextField();
+                    panel.add(titleField);
+                    panel.add(new JLabel("Author:"));
+                    JTextField authorField = new JTextField();
+                    panel.add(authorField);
+                    panel.add(new JLabel("Year:"));
+                    JTextField yearField = new JTextField();
+                    panel.add(yearField);
+                    panel.add(new JLabel("ISBN:"));
+                    JTextField isbnField = new JTextField();
+                    panel.add(isbnField);
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Add Book",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            panel,
+                            "Add Book",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE);
 
-                if (result == JOptionPane.OK_OPTION) {
-                    String title = titleField.getText();
-                    String author = authorField.getText();
-                    String year = yearField.getText();
-                    String isbn = isbnField.getText();
+                    if (result == JOptionPane.OK_OPTION) {
+                        String title = titleField.getText();
+                        String author = authorField.getText();
+                        String year = yearField.getText();
+                        String isbn = isbnField.getText();
 
-                    if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
-                        if (isValidISBN(isbn)) {
-                            Book book = new Book(-1, title, author, year, isbn);
-                            library.addBook(book);
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book added successfully!");
+                        if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
+                            if (isValidISBN(isbn)) {
+                                Book book = new Book(-1, title, author, year, isbn);
+                                library.addBook(book);
+
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Book added successfully!",
+                                        "Success",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Invalid ISBN format. ISBN should be 13 digits without spaces or dashes.",
+                                        "Invalid ISBN",
+                                        JOptionPane.WARNING_MESSAGE);
+                            }
                         } else {
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid year or ISBN format.");
+                            JOptionPane.showMessageDialog(
+                                    LibraryManagementApp.this,
+                                    "Please fill in all fields.",
+                                    "Incomplete Fields",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Please fill in all fields.");
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "An error occurred: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -228,47 +281,70 @@ public class LibraryManagementApp extends JFrame {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JPanel panel = new JPanel(new GridLayout(0, 1));
-                panel.add(new JLabel("Book ID:"));
-                JTextField bookIdField = new JTextField();
-                panel.add(bookIdField);
-                panel.add(new JLabel("Title:"));
-                JTextField titleField = new JTextField();
-                panel.add(titleField);
-                panel.add(new JLabel("Author:"));
-                JTextField authorField = new JTextField();
-                panel.add(authorField);
-                panel.add(new JLabel("Year:"));
-                JTextField yearField = new JTextField();
-                panel.add(yearField);
-                panel.add(new JLabel("ISBN:"));
-                JTextField isbnField = new JTextField();
-                panel.add(isbnField);
+                try {
+                    JPanel panel = new JPanel(new GridLayout(0, 1));
+                    panel.add(new JLabel("Book ID:"));
+                    JTextField bookIdField = new JTextField();
+                    panel.add(bookIdField);
+                    panel.add(new JLabel("Title:"));
+                    JTextField titleField = new JTextField();
+                    panel.add(titleField);
+                    panel.add(new JLabel("Author:"));
+                    JTextField authorField = new JTextField();
+                    panel.add(authorField);
+                    panel.add(new JLabel("Year:"));
+                    JTextField yearField = new JTextField();
+                    panel.add(yearField);
+                    panel.add(new JLabel("ISBN:"));
+                    JTextField isbnField = new JTextField();
+                    panel.add(isbnField);
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Update Book",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                    int result = JOptionPane.showConfirmDialog(
+                            null,
+                            panel,
+                            "Update Book",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE);
 
-                if (result == JOptionPane.OK_OPTION) {
-                    String title = titleField.getText();
-                    String author = authorField.getText();
-                    String year = yearField.getText();
-                    String isbn = isbnField.getText();
+                    if (result == JOptionPane.OK_OPTION) {
+                        String title = titleField.getText();
+                        String author = authorField.getText();
+                        String year = yearField.getText();
+                        String isbn = isbnField.getText();
 
-                    if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
-                        int selectedBookId = Integer.parseInt(bookIdField.getText());
-                        Book updatedBook = new Book(selectedBookId, title, author, year, isbn);
+                        if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
+                            try {
+                                int selectedBookId = Integer.parseInt(bookIdField.getText());
+                                Book updatedBook = new Book(selectedBookId, title, author, year, isbn);
 
-                        try {
-                            library.updateBook(updatedBook);
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book updated successfully!");
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this,
-                                    "Error updating book: " + ex.getMessage());
+                                library.updateBook(updatedBook);
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Book updated successfully!",
+                                        "Success",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } catch (NumberFormatException ex) {
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Invalid book ID format.",
+                                        "Invalid Input",
+                                        JOptionPane.WARNING_MESSAGE);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    LibraryManagementApp.this,
+                                    "Please fill in all fields.",
+                                    "Incomplete Fields",
+                                    JOptionPane.WARNING_MESSAGE);
                         }
-                    } else {
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Please fill in all fields.");
                     }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "An error occurred: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -278,26 +354,57 @@ public class LibraryManagementApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int selectedBookId = Integer.parseInt(
-                            JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter Book ID to Delete:"));
+                            JOptionPane.showInputDialog(
+                                    LibraryManagementApp.this,
+                                    "Enter Book ID to Delete:"));
 
-                    try {
-                        String deleteSql = "DELETE FROM books WHERE id = ?";
-                        PreparedStatement deleteStatement = library.getConnection().prepareStatement(deleteSql);
-                        deleteStatement.setInt(1, selectedBookId);
-                        int rowsAffected = deleteStatement.executeUpdate();
-                        if (rowsAffected > 0) {
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book deleted successfully!");
-                        } else {
-                            JOptionPane.showMessageDialog(LibraryManagementApp.this,
-                                    "Book with ID " + selectedBookId + " not found in the database.");
+                    int confirmDelete = JOptionPane.showConfirmDialog(
+                            LibraryManagementApp.this,
+                            "Are you sure you want to delete this book?",
+                            "Confirm Deletion",
+                            JOptionPane.YES_NO_OPTION);
+
+                    if (confirmDelete == JOptionPane.YES_OPTION) {
+                        try {
+                            String deleteSql = "DELETE FROM books WHERE id = ?";
+                            PreparedStatement deleteStatement = library.getConnection().prepareStatement(deleteSql);
+                            deleteStatement.setInt(1, selectedBookId);
+                            int rowsAffected = deleteStatement.executeUpdate();
+                            if (rowsAffected > 0) {
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Book deleted successfully!",
+                                        "Success",
+                                        JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(
+                                        LibraryManagementApp.this,
+                                        "Book with ID " + selectedBookId + " not found in the database.",
+                                        "Not Found",
+                                        JOptionPane.WARNING_MESSAGE);
+                            }
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+                            JOptionPane.showMessageDialog(
+                                    LibraryManagementApp.this,
+                                    "Error deleting book: " + ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE);
                         }
-                    } catch (SQLException ex) {
-                        ex.printStackTrace();
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this,
-                                "Error deleting book: " + ex.getMessage());
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid book ID format.");
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "Invalid book ID format.",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "An error occurred: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -306,27 +413,23 @@ public class LibraryManagementApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 java.util.List<Book> books = library.getAllBooks();
+                String[] columnHeaders = { "ID", "Title", "Author", "Year", "ISBN" };
+                Object[][] data = new Object[books.size()][5];
 
-                StringBuilder bookList = new StringBuilder();
-                for (Book book : books) {
-                    bookList.append(book.getInfo()).append("\n\n");
+                for (int i = 0; i < books.size(); i++) {
+                    Book book = books.get(i);
+                    data[i] = new Object[] { book.getId(), book.getTitle(), book.getAuthor(), book.getYear(),
+                            book.getIsbn() };
                 }
 
-                if (bookList.length() == 0) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "No books available.");
-                } else {
-                    JTextArea textArea = new JTextArea(bookList.toString());
-                    textArea.setEditable(false);
-                    // Customize text area appearance
-
-                    textArea.setFont(new Font("Calibri", Font.PLAIN, 16)); // Change font and size
-                    textArea.setForeground(Color.BLACK); // Change text color
-                    textArea.setBackground(new Color(240, 240, 240)); // Light gray background
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, scrollPane, "Book List",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                JTable table = createTable(columnHeaders, data);
+                JScrollPane scrollPane = new JScrollPane(table);
+                scrollPane.setPreferredSize(new Dimension(800, 400));
+                JOptionPane.showMessageDialog(
+                        LibraryManagementApp.this,
+                        scrollPane,
+                        "Book List",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -338,18 +441,30 @@ public class LibraryManagementApp extends JFrame {
                 JTextField nameField = new JTextField();
                 panel.add(nameField);
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Add Patron",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        panel,
+                        "Add Patron",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
 
                 if (result == JOptionPane.OK_OPTION) {
                     String name = nameField.getText();
 
                     if (!name.isEmpty()) {
-                        Patron patron = new Patron(-1, name); // -1 for placeholder ID
+                        Patron patron = new Patron(-1, name);
                         library.addPatron(patron);
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Patron added successfully!");
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Patron added successfully!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } else {
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Please fill in all fields.");
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Please enter a name.",
+                                "Incomplete Information",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 }
             }
@@ -366,20 +481,40 @@ public class LibraryManagementApp extends JFrame {
                 JTextField newNameField = new JTextField();
                 panel.add(newNameField);
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Update Patron",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        panel,
+                        "Update Patron",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
 
                 if (result == JOptionPane.OK_OPTION) {
                     String newName = newNameField.getText();
 
                     if (!newName.isEmpty()) {
-                        int selectedPatronId = Integer.parseInt(patronIdField.getText());
-                        Patron updatedPatron = new Patron(selectedPatronId, newName);
+                        try {
+                            int selectedPatronId = Integer.parseInt(patronIdField.getText());
+                            Patron updatedPatron = new Patron(selectedPatronId, newName);
 
-                        library.updatePatron(updatedPatron);
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Patron updated successfully!");
+                            library.updatePatron(updatedPatron);
+                            JOptionPane.showMessageDialog(
+                                    LibraryManagementApp.this,
+                                    "Patron updated successfully!",
+                                    "Success",
+                                    JOptionPane.INFORMATION_MESSAGE);
+                        } catch (NumberFormatException ex) {
+                            JOptionPane.showMessageDialog(
+                                    LibraryManagementApp.this,
+                                    "Invalid patron ID format.",
+                                    "Invalid Input",
+                                    JOptionPane.WARNING_MESSAGE);
+                        }
                     } else {
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Please fill in all fields.");
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Please enter a new name.",
+                                "Incomplete Information",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 }
             }
@@ -390,14 +525,39 @@ public class LibraryManagementApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int selectedPatronId = Integer.parseInt(
-                            JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter Patron ID to Delete:"));
+                            JOptionPane.showInputDialog(
+                                    LibraryManagementApp.this,
+                                    "Enter Patron ID to Delete:"));
 
-                    // Delete patron from the database using selectedPatronId
-                    library.deletePatron(selectedPatronId);
+                    int confirmDelete = JOptionPane.showConfirmDialog(
+                            LibraryManagementApp.this,
+                            "Are you sure you want to delete this patron?",
+                            "Confirm Deletion",
+                            JOptionPane.YES_NO_OPTION);
 
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Patron deleted successfully!");
+                    if (confirmDelete == JOptionPane.YES_OPTION) {
+                        // Delete patron from the database using selectedPatronId
+                        library.deletePatron(selectedPatronId);
+
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Patron deleted successfully!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid patron ID format.");
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "Invalid patron ID format.",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "An error occurred: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -406,25 +566,22 @@ public class LibraryManagementApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 java.util.List<Patron> patrons = library.getAllPatrons();
+                String[] columnHeaders = { "ID", "Name" };
+                Object[][] data = new Object[patrons.size()][2];
 
-                StringBuilder patronList = new StringBuilder();
-                for (Patron patron : patrons) {
-                    patronList.append(patron.getInfo()).append("\n\n");
+                for (int i = 0; i < patrons.size(); i++) {
+                    Patron patron = patrons.get(i);
+                    data[i] = new Object[] { patron.getId(), patron.getName() };
                 }
 
-                if (patronList.length() == 0) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "No patrons available.");
-                } else {
-                    JTextArea textArea = new JTextArea(patronList.toString());
-                    textArea.setEditable(false);
-                    textArea.setFont(new Font("Calibri", Font.PLAIN, 16)); // Change font and size
-                    textArea.setForeground(Color.BLACK); // Change text color
-                    textArea.setBackground(new Color(240, 240, 240)); // Light gray background
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, scrollPane, "Patron List",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                JTable table = createTable(columnHeaders, data);
+                JScrollPane scrollPane = new JScrollPane(table);
+                scrollPane.setPreferredSize(new Dimension(800, 400));
+                JOptionPane.showMessageDialog(
+                        LibraryManagementApp.this,
+                        scrollPane,
+                        "Patron List",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -439,8 +596,12 @@ public class LibraryManagementApp extends JFrame {
                 JTextField patronIdField = new JTextField();
                 panel.add(patronIdField);
 
-                int result = JOptionPane.showConfirmDialog(null, panel, "Add Transaction",
-                        JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+                int result = JOptionPane.showConfirmDialog(
+                        null,
+                        panel,
+                        "Add Transaction",
+                        JOptionPane.OK_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
 
                 if (result == JOptionPane.OK_OPTION) {
                     try {
@@ -448,27 +609,48 @@ public class LibraryManagementApp extends JFrame {
                         int patronId = Integer.parseInt(patronIdField.getText());
 
                         library.checkoutBook(bookId, patronId);
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Transaction added successfully!");
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Transaction added successfully!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid input format.");
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Invalid input format.",
+                                "Invalid Input",
+                                JOptionPane.WARNING_MESSAGE);
                     }
                 }
             }
         });
+
         checkoutBookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
                     int bookId = Integer.parseInt(
-                            JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter Book ID to Checkout:"));
+                            JOptionPane.showInputDialog(
+                                    LibraryManagementApp.this,
+                                    "Enter Book ID to Checkout:"));
                     int patronId = Integer.parseInt(
-                            JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter Patron ID:"));
+                            JOptionPane.showInputDialog(
+                                    LibraryManagementApp.this,
+                                    "Enter Patron ID:"));
 
                     library.checkoutBook(bookId, patronId);
 
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book checked out successfully!");
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "Book checked out successfully!",
+                            "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid input format.");
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "Invalid input format.",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -478,13 +660,39 @@ public class LibraryManagementApp extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     int transactionId = Integer.parseInt(
-                            JOptionPane.showInputDialog(LibraryManagementApp.this, "Enter Transaction ID to Return:"));
+                            JOptionPane.showInputDialog(
+                                    LibraryManagementApp.this,
+                                    "Enter Transaction ID to Return:"));
 
-                    library.returnBook(transactionId);
+                    int confirmReturn = JOptionPane.showConfirmDialog(
+                            LibraryManagementApp.this,
+                            "Are you sure you want to return this book?",
+                            "Confirm Return",
+                            JOptionPane.YES_NO_OPTION);
 
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Book returned successfully!");
+                    if (confirmReturn == JOptionPane.YES_OPTION) {
+                        // Return the book based on the transaction ID
+                        library.returnBook(transactionId);
+
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Book returned successfully!",
+                                "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "Invalid input format.");
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "Invalid input format.",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "An error occurred: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -493,43 +701,20 @@ public class LibraryManagementApp extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 java.util.List<Transaction> transactions = library.getAllTransactions();
+                String[] columnHeaders = { "ID", "Book ID", "Patron ID", "Checkout Date", "Due Date" };
+                Object[][] data = new Object[transactions.size()][5];
 
-                StringBuilder transactionList = new StringBuilder();
-                for (Transaction transaction : transactions) {
-                    if (transaction != null) {
-                        System.out.println("Transaction ID: " + transaction.getId());
-                        System.out.println("Book ID: " + transaction.getBookId()); // Fetch book ID directly
-                        System.out.println("Patron ID: " + transaction.getPatronId()); // Fetch patron ID directly
-                        System.out.println("Checkout Date: " + transaction.getCheckoutDate());
-                        System.out.println("Due Date: " + transaction.getDueDate());
-                        System.out.println();
-
-                        transactionList.append("Transaction ID: ").append(transaction.getId()).append("\n");
-                        transactionList.append("Book ID: ").append(transaction.getBookId()).append("\n");
-
-                        transactionList.append("Patron ID: ").append(transaction.getPatronId()).append("\n");
-
-                        transactionList.append("Checkout Date: ").append(transaction.getCheckoutDate()).append("\n");
-                        transactionList.append("Due Date: ").append(transaction.getDueDate()).append("\n");
-                        transactionList.append("\n");
-                    } else {
-                        System.out.println("Encountered a null transaction.");
-                    }
+                for (int i = 0; i < transactions.size(); i++) {
+                    Transaction transaction = transactions.get(i);
+                    data[i] = new Object[] { transaction.getId(), transaction.getBookId(), transaction.getPatronId(),
+                            transaction.getCheckoutDate(), transaction.getDueDate() };
                 }
 
-                if (transactionList.length() == 0) {
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, "No transactions available.");
-                } else {
-                    JTextArea textArea = new JTextArea(transactionList.toString());
-                    textArea.setEditable(false);
-                    textArea.setFont(new Font("Calibri", Font.PLAIN, 16)); // Change font and size
-                    textArea.setForeground(Color.BLACK); // Change text color
-                    textArea.setBackground(new Color(240, 240, 240)); // Light gray background
-                    JScrollPane scrollPane = new JScrollPane(textArea);
-                    scrollPane.setPreferredSize(new Dimension(400, 300));
-                    JOptionPane.showMessageDialog(LibraryManagementApp.this, scrollPane, "Transaction List",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                JTable table = createTable(columnHeaders, data);
+                JScrollPane scrollPane = new JScrollPane(table);
+                scrollPane.setPreferredSize(new Dimension(800, 400)); // Adjust the dimensions as needed
+                JOptionPane.showMessageDialog(LibraryManagementApp.this, scrollPane, "Transaction List",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -538,8 +723,9 @@ public class LibraryManagementApp extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        pack();
+        pack(); // Pack components to fit the preferred size
         setLocationRelativeTo(null);
+        setVisible(true); // Set the frame visible
     }
 
     public static void main(String[] args) {
