@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class LibraryManagementApp extends JFrame {
     private Library library;
 
+    private boolean loggedIn = false;
     private JButton addButton;
     private JButton updateButton;
     private JButton deleteButton;
@@ -46,26 +47,30 @@ public class LibraryManagementApp extends JFrame {
         return isbn.length() == 13;
     }
 
+    private boolean isValidYear(String year) {
+        return year.matches("\\d{4}"); // Check if year consists of exactly 4 digits
+    }
+
     // Customize button appearance
     int buttonWidth = 250; // Set the desired width for buttons
     int buttonHeight = 80; // Set the desired height for buttons
-    Font buttonFont = new Font("Arial", Font.BOLD, 18); // Customize font and siz
+    Font buttonFont = new Font("Arial", Font.BOLD, 18); // Customize font and size
 
     private void setButtonsEnabled(boolean enabled) {
-        addButton.setEnabled(enabled);
-        updateButton.setEnabled(enabled);
-        deleteButton.setEnabled(enabled);
-        displayButton.setEnabled(enabled);
+        addButton.setEnabled(enabled && loggedIn);
+        updateButton.setEnabled(enabled && loggedIn);
+        deleteButton.setEnabled(enabled && loggedIn);
+        displayButton.setEnabled(enabled && loggedIn);
 
-        addPatronButton.setEnabled(enabled);
-        updatePatronButton.setEnabled(enabled);
-        deletePatronButton.setEnabled(enabled);
-        displayPatronsButton.setEnabled(enabled);
+        addPatronButton.setEnabled(enabled && loggedIn);
+        updatePatronButton.setEnabled(enabled && loggedIn);
+        deletePatronButton.setEnabled(enabled && loggedIn);
+        displayPatronsButton.setEnabled(enabled && loggedIn);
 
-        addTransactionButton.setEnabled(enabled);
-        checkoutBookButton.setEnabled(enabled);
-        returnBookButton.setEnabled(enabled);
-        displayTransactionsButton.setEnabled(enabled);
+        addTransactionButton.setEnabled(enabled && loggedIn);
+        checkoutBookButton.setEnabled(enabled && loggedIn);
+        returnBookButton.setEnabled(enabled && loggedIn);
+        displayTransactionsButton.setEnabled(enabled && loggedIn);
     }
 
     private JTable createTable(String[] columnHeaders, Object[][] data) {
@@ -113,18 +118,24 @@ public class LibraryManagementApp extends JFrame {
 
         getContentPane().add(buttonPanel, BorderLayout.CENTER);
 
-        customizeButton(addButton, new Color(52, 152, 219));
-        customizeButton(updateButton, new Color(46, 204, 113));
-        customizeButton(deleteButton, new Color(231, 76, 60));
-        customizeButton(displayButton, new Color(241, 196, 15));
-        customizeButton(addPatronButton, new Color(155, 89, 182));
-        customizeButton(updatePatronButton, new Color(192, 57, 43));
-        customizeButton(deletePatronButton, new Color(44, 62, 80));
-        customizeButton(displayPatronsButton, new Color(230, 126, 34));
-        customizeButton(addTransactionButton, new Color(46, 204, 113));
-        customizeButton(checkoutBookButton, new Color(52, 152, 219));
-        customizeButton(returnBookButton, new Color(44, 62, 80));
-        customizeButton(displayTransactionsButton, new Color(231, 76, 60));
+        Color primaryColor = new Color(52, 152, 219);
+        Color secondaryColor = new Color(241, 196, 15);
+        Color successColor = new Color(46, 204, 113);
+        Color dangerColor = new Color(231, 76, 60);
+        Color darkColor = new Color(44, 62, 80);
+
+        customizeButton(addButton, primaryColor);
+        customizeButton(updateButton, successColor);
+        customizeButton(deleteButton, dangerColor);
+        customizeButton(displayButton, secondaryColor);
+        customizeButton(addPatronButton, primaryColor);
+        customizeButton(updatePatronButton, successColor);
+        customizeButton(deletePatronButton, dangerColor);
+        customizeButton(displayPatronsButton, secondaryColor);
+        customizeButton(addTransactionButton, primaryColor);
+        customizeButton(checkoutBookButton, successColor);
+        customizeButton(returnBookButton, dangerColor);
+        customizeButton(displayTransactionsButton, secondaryColor);
 
         // Update the preferred dimensions for the buttons
         addButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
@@ -155,10 +166,42 @@ public class LibraryManagementApp extends JFrame {
         returnBookButton.setFont(buttonFont);
         displayTransactionsButton.setFont(buttonFont);
 
+        addButton.setToolTipText("Add a new book");
+        updateButton.setToolTipText("Update book information");
+        deleteButton.setToolTipText("Delete selected book");
+        displayButton.setToolTipText("Display Book");
+
+        addPatronButton.setToolTipText("Add a new patron");
+        updatePatronButton.setToolTipText("Update Patron information");
+        deletePatronButton.setToolTipText("Delete selected Patron");
+        displayPatronsButton.setToolTipText("Display Patron");
+
+        addTransactionButton.setToolTipText("Add a new transaction");
+        checkoutBookButton.setToolTipText("Checkout Selected Book");
+        returnBookButton.setToolTipText("Delete selected transaction");
+        displayTransactionsButton.setToolTipText("Displaty transaction");
+
+        addButton.setIcon(IconUtils.resizeIcon("Image/addBook.png", 30, 30));
+        updateButton.setIcon(IconUtils.resizeIcon("Image/updateBook.png", 30, 30));
+        deleteButton.setIcon(IconUtils.resizeIcon("Image/deleteBook.png", 30, 30));
+        displayButton.setIcon(IconUtils.resizeIcon("Image/displayBook.png", 30, 30));
+
+        addPatronButton.setIcon(IconUtils.resizeIcon("Image/add.png", 30, 30));
+        updatePatronButton.setIcon(IconUtils.resizeIcon("Image/update.png", 30, 30));
+        deletePatronButton.setIcon(IconUtils.resizeIcon("Image/delete.png", 30, 30));
+        displayPatronsButton.setIcon(IconUtils.resizeIcon("Image/display.png", 30, 30));
+
+        addTransactionButton.setIcon(IconUtils.resizeIcon("Image/add.png", 30, 30));
+        checkoutBookButton.setIcon(IconUtils.resizeIcon("Image/update.png", 30, 30));
+        returnBookButton.setIcon(IconUtils.resizeIcon("Image/delete.png", 30, 30));
+        displayTransactionsButton.setIcon(IconUtils.resizeIcon("Image/display.png", 30, 30));
+
         JButton registerButton = new JButton("Register User");
-        customizeButton(registerButton, new Color(155, 89, 182));
+        customizeButton(registerButton, primaryColor);
         buttonPanel.add(registerButton);
         registerButton.setFont(buttonFont);
+        registerButton.setToolTipText("Register");
+        registerButton.setIcon(IconUtils.resizeIcon("Image/register.png", 30, 30));
 
         registerButton.addActionListener(new ActionListener() {
             @Override
@@ -174,10 +217,13 @@ public class LibraryManagementApp extends JFrame {
         });
 
         JButton loginButton = new JButton("Login");
-        customizeButton(loginButton, new Color(46, 204, 113));
+        customizeButton(loginButton, successColor);
         buttonPanel.add(loginButton);
         loginButton.setFont(buttonFont);
+        loginButton.setToolTipText("Login");
+        loginButton.setIcon(IconUtils.resizeIcon("Image/login.png", 30, 30));
 
+        // ActionListener for the loginButton
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,8 +232,9 @@ public class LibraryManagementApp extends JFrame {
 
                 if (username != null && password != null) {
                     if (library.authenticateUser(username, password)) {
+                        loggedIn = true; // Mark user as logged in
+                        setButtonsEnabled(true); // Enable buttons after successful login
                         JOptionPane.showMessageDialog(LibraryManagementApp.this, "Login successful!");
-                        LibraryManagementApp.this.setButtonsEnabled(true); // Enable buttons after successful login
                     } else {
                         JOptionPane.showMessageDialog(LibraryManagementApp.this, "Login failed. Invalid credentials.");
                     }
@@ -196,24 +243,39 @@ public class LibraryManagementApp extends JFrame {
         });
 
         JButton logoutButton = new JButton("Logout");
-        customizeButton(logoutButton, new Color(192, 57, 43));
+        customizeButton(logoutButton, darkColor);
         buttonPanel.add(logoutButton);
         logoutButton.setFont(buttonFont);
+        logoutButton.setToolTipText("Logout");
+        logoutButton.setIcon(IconUtils.resizeIcon("Image/logout.png", 30, 30));
 
+        // ActionListener for the logoutButton
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LibraryManagementApp.this.setButtonsEnabled(false); // Disable buttons on logout
+
+                if (!loggedIn) {
+                    JOptionPane.showMessageDialog(
+                            LibraryManagementApp.this,
+                            "You must log in first.",
+                            "Logout Error",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                loggedIn = false; // Update login status
+                setButtonsEnabled(false); // Disable buttons on logout
+
+                JOptionPane.showMessageDialog(LibraryManagementApp.this, "Logout successful!");
             }
         });
 
         setButtonsEnabled(false);
-
         // Button actions
-
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     JPanel panel = new JPanel(new GridLayout(0, 1));
                     panel.add(new JLabel("Title:"));
@@ -244,14 +306,22 @@ public class LibraryManagementApp extends JFrame {
 
                         if (!title.isEmpty() && !author.isEmpty() && !year.isEmpty() && !isbn.isEmpty()) {
                             if (isValidISBN(isbn)) {
-                                Book book = new Book(-1, title, author, year, isbn);
-                                library.addBook(book);
+                                if (isValidYear(year)) {
+                                    Book book = new Book(-1, title, author, year, isbn);
+                                    library.addBook(book);
 
-                                JOptionPane.showMessageDialog(
-                                        LibraryManagementApp.this,
-                                        "Book added successfully!",
-                                        "Success",
-                                        JOptionPane.INFORMATION_MESSAGE);
+                                    JOptionPane.showMessageDialog(
+                                            LibraryManagementApp.this,
+                                            "Book added successfully!",
+                                            "Success",
+                                            JOptionPane.INFORMATION_MESSAGE);
+                                } else {
+                                    JOptionPane.showMessageDialog(
+                                            LibraryManagementApp.this,
+                                            "Invalid year format. Year should be a 4-digit number.",
+                                            "Invalid Year",
+                                            JOptionPane.WARNING_MESSAGE);
+                                }
                             } else {
                                 JOptionPane.showMessageDialog(
                                         LibraryManagementApp.this,
@@ -281,6 +351,7 @@ public class LibraryManagementApp extends JFrame {
         updateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     JPanel panel = new JPanel(new GridLayout(0, 1));
                     panel.add(new JLabel("Book ID:"));
@@ -352,6 +423,7 @@ public class LibraryManagementApp extends JFrame {
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     int selectedBookId = Integer.parseInt(
                             JOptionPane.showInputDialog(
@@ -412,6 +484,7 @@ public class LibraryManagementApp extends JFrame {
         displayButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 java.util.List<Book> books = library.getAllBooks();
                 String[] columnHeaders = { "ID", "Title", "Author", "Year", "ISBN" };
                 Object[][] data = new Object[books.size()][5];
@@ -436,6 +509,7 @@ public class LibraryManagementApp extends JFrame {
         addPatronButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Name:"));
                 JTextField nameField = new JTextField();
@@ -473,6 +547,7 @@ public class LibraryManagementApp extends JFrame {
         updatePatronButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Patron ID:"));
                 JTextField patronIdField = new JTextField();
@@ -523,11 +598,21 @@ public class LibraryManagementApp extends JFrame {
         deletePatronButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     int selectedPatronId = Integer.parseInt(
                             JOptionPane.showInputDialog(
                                     LibraryManagementApp.this,
                                     "Enter Patron ID to Delete:"));
+
+                    if (!library.isPatronExists(selectedPatronId)) {
+                        JOptionPane.showMessageDialog(
+                                LibraryManagementApp.this,
+                                "Patron with ID " + selectedPatronId + " not found in the database.",
+                                "Patron Not Found",
+                                JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
 
                     int confirmDelete = JOptionPane.showConfirmDialog(
                             LibraryManagementApp.this,
@@ -536,7 +621,6 @@ public class LibraryManagementApp extends JFrame {
                             JOptionPane.YES_NO_OPTION);
 
                     if (confirmDelete == JOptionPane.YES_OPTION) {
-                        // Delete patron from the database using selectedPatronId
                         library.deletePatron(selectedPatronId);
 
                         JOptionPane.showMessageDialog(
@@ -565,6 +649,7 @@ public class LibraryManagementApp extends JFrame {
         displayPatronsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 java.util.List<Patron> patrons = library.getAllPatrons();
                 String[] columnHeaders = { "ID", "Name" };
                 Object[][] data = new Object[patrons.size()][2];
@@ -588,6 +673,7 @@ public class LibraryManagementApp extends JFrame {
         addTransactionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 JPanel panel = new JPanel(new GridLayout(0, 1));
                 panel.add(new JLabel("Book ID:"));
                 JTextField bookIdField = new JTextField();
@@ -628,6 +714,7 @@ public class LibraryManagementApp extends JFrame {
         checkoutBookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     int bookId = Integer.parseInt(
                             JOptionPane.showInputDialog(
@@ -658,6 +745,7 @@ public class LibraryManagementApp extends JFrame {
         returnBookButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 try {
                     int transactionId = Integer.parseInt(
                             JOptionPane.showInputDialog(
@@ -700,6 +788,7 @@ public class LibraryManagementApp extends JFrame {
         displayTransactionsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 java.util.List<Transaction> transactions = library.getAllTransactions();
                 String[] columnHeaders = { "ID", "Book ID", "Patron ID", "Checkout Date", "Due Date" };
                 Object[][] data = new Object[transactions.size()][5];
